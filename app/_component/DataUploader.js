@@ -13,7 +13,7 @@ import ReportLog from "./ReportLog";
 let socket;
 
 const BACKEND_URL =
-    process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+    process.env.NEXT_PUBLIC_BACKEND_URL || "http://0.0.0.0:5000";
 
 export default function DataUploader() {
     const [csvFile, setCsvFile] = useState(null);
