@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+:root {
+    --background: #ffffff;
+    --foreground: #171717;
+}
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: #0a0a0a;
+        --foreground: #ededed;
+    }
+}
+
+@layer utilities {
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
+
+body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.custom-shape-divider-bottom-1750244519 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+}
+
+.custom-shape-divider-bottom-1750244519 svg {
+    position: relative;
+    display: block;
+    width: calc(125% + 1.3px);
+    height: 100px;
+}
+
+.custom-shape-divider-bottom-1750244519 .shape-fill {
+    fill: #ffffff;
+}
+
+/** For mobile devices **/
+@media (max-width: 767px) {
+    .custom-shape-divider-bottom-1750244519 svg {
+        width: calc(157% + 1.3px);
+        height: 85px;
+    }
+}
+
+.loader_spinner {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    border: 3px solid;
+    border-color: #3168ff #3168ff transparent transparent;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+.loader_spinner::after,
+.loader_spinner::before {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    border: 3px solid;
+    border-color: transparent transparent #ff3d00 #ff3d00;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    animation: rotationBack 0.5s linear infinite;
+    transform-origin: center center;
+}
+.loader_spinner::before {
+    width: 20px;
+    height: 20px;
+    border-color: #3168ff #3168ff transparent transparent;
+    animation: rotation 1.5s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@keyframes rotationBack {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+
+/* HTML: <div class="loader_process"></div> */
+.loader_process {
+    width: 30px;
+    aspect-ratio: 1;
+    position: relative;
+}
+.loader_process:before,
+.loader_process:after {
+    content: "";
+    position: absolute;
+    border-radius: 50px;
+    box-shadow: 0 0 0 3px inset #fff;
+    animation: l4 2.5s infinite;
+}
+.loader_process:after {
+    animation-delay: -1.25s;
+}
+@keyframes l4 {
+    0% {
+        inset: 0 15px 15px 0;
+    }
+    12.5% {
+        inset: 0 15px 0 0;
+    }
+    25% {
+        inset: 15px 15px 0 0;
+    }
+    37.5% {
+        inset: 15px 0 0 0;
+    }
+    50% {
+        inset: 15px 0 0 15px;
+    }
+    62.5% {
+        inset: 0 0 0 15px;
+    }
+    75% {
+        inset: 0 0 15px 15px;
+    }
+    87.5% {
+        inset: 0 0 15px 0;
+    }
+    100% {
+        inset: 0 15px 15px 0;
+    }
+}
