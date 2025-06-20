@@ -440,5 +440,7 @@ While the project is designed for split deployment, you can deploy both frontend
 ### Application Flow
 
 <img src="screenshots/image_1.png" alt="Application Screenshot 1" width="600"/>
+
 <img src="screenshots/image_2.png" alt="Application Screenshot 2" width="600"/>
+
 <img src="screenshots/image_3.png" alt="Application Screenshot 3" width="600"/>
