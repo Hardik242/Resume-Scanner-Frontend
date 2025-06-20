@@ -2,13 +2,20 @@ import Image from "next/image";
 import {useCallback} from "react";
 import {useDropzone} from "react-dropzone";
 
-export default function DragDropUpload({fileType, setFile, setError, iconSrc}) {
+export default function DragDropUpload({
+    fileType,
+    setFile,
+    setError,
+    iconSrc,
+    setIsFileChange,
+}) {
     const onDropAccepted = useCallback(
         (acceptedFiles) => {
             setFile(acceptedFiles[0]);
             setError(null);
+            setIsFileChange(true);
         },
-        [setFile, setError]
+        [setFile, setError, setIsFileChange]
     );
 
     const onDropRejected = useCallback(

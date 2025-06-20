@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function CheckAnimation({classData = ""}) {
+export default function CheckIcon({classData = ""}) {
     return (
         <Image
             src="/check.png"

@@ -3,8 +3,8 @@
 import Image from "next/image";
 import Papa from "papaparse";
 import {useEffect, useState} from "react";
-import io from "socket.io-client"; // Import socket.io-client
-import CheckAnimation from "./CheckAnimation";
+import io from "socket.io-client";
+import CheckIcon from "./CheckIcon";
 import CSVButton from "./CSVButton";
 import DragDropUpload from "./DragDropUpload";
 import ProgressBar from "./ProgressBar";
@@ -12,6 +12,11 @@ import ReportLog from "./ReportLog";
 
 let socket;
 
+// For local host backend use this
+// const BACKEND_URL =
+//     process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+
+//For deployed backend use this
 const BACKEND_URL =
     process.env.NEXT_PUBLIC_BACKEND_URL || "http://0.0.0.0:5000";
 
@@ -19,11 +24,13 @@ export default function DataUploader() {
     const [csvFile, setCsvFile] = useState(null);
     const [textFile, setTextFile] = useState(null);
 
+    const [isFileChange, setIsFileChange] = useState(false);
+
     const [csvError, setCsvError] = useState(null);
     const [textError, setTextError] = useState(null);
 
     //Statuses: fetching resume, matching with job description, converting to csv, completed
-    //StatusProgress: in progress, completed
+    //Report: Contains the log track
     const [isLoading, setIsLoading] = useState({
         state: false,
         status: "",
@@ -39,42 +46,11 @@ export default function DataUploader() {
      */
     useEffect(() => {
         // Initialize Socket.IO connection only once when the component mounts
-        // If 'socket' is already defined, it means connection was established.
         if (!socket) {
-            // Connects to the same host/port that served the page (e.g., http://localhost:3000)
             socket = io(BACKEND_URL);
 
             socket.on("connect", () => {
                 console.log("Connected to backend socket successfully!");
-            });
-
-            // Listener for real-time progress updates from the backend
-            socket.on("processingUpdate", (data) => {
-                setIsLoading((prev) => ({
-                    ...prev,
-                    status: data.status || prev.status,
-                    report: data.report || prev.report,
-                }));
-            });
-
-            // Listener for processing completion and final data from the backend
-            socket.on("processingComplete", async (data) => {
-                console.log(data.finalData);
-                setIsLoading((prev) => ({
-                    state: false,
-                    status: "completed",
-                    report: data.report || prev.report,
-                })); // Stop loading, set final status
-                setIsCompleted(true); // Mark as completed
-                setFinalProcessedData(data.finalData); // Store the final processed data
-            });
-
-            // Listener for errors from the backend
-            socket.on("processingError", (error) => {
-                console.error("Backend processing error:", error.message);
-                setIsLoading({state: false, report: `Error: ${error.message}`}); // Display error
-                setIsCompleted(false); // Ensure completion state is false on error
-                setFinalProcessedData(null);
             });
         }
 
@@ -86,6 +62,18 @@ export default function DataUploader() {
         };
     }, []);
 
+    //Reset states on file change
+    useEffect(() => {
+        if (isFileChange) {
+            setIsLoading({state: false, status: "", report: ""});
+            setIsCompleted(false);
+            setFinalProcessedData(null);
+            setCsvError(null);
+            setTextError(null);
+        }
+    }, [csvFile, textFile, isFileChange]);
+
+    //Uploads data to backend server using socket.io
     async function handleDataUpload(parsedCsv, parsedTxt) {
         if (!socket || !socket.connected) {
             console.error(
@@ -98,21 +86,50 @@ export default function DataUploader() {
             return;
         }
 
-        setIsLoading({
-            state: true,
-            status: "uploading data",
+        setIsLoading((prev) => ({
+            ...prev,
             report: "Uploading data to server...",
-        });
-        setFinalProcessedData(null); // Clear previous results
-        setIsCompleted(false); // Reset completion status
+        }));
+        setFinalProcessedData(null);
+        setIsCompleted(false);
 
         // Emit the 'startProcessing' event to the backend with the parsed data
         socket.emit("startProcessing", {
             csvData: parsedCsv,
             txtData: parsedTxt,
         });
+
+        // Listener for real-time progress updates from the backend
+        socket.on("processingUpdate", (data) => {
+            setIsLoading((prev) => ({
+                ...prev,
+                status: data.status || prev.status,
+                report: data.report || prev.report,
+            }));
+        });
+
+        // Listener for processing completion and final data from the backend
+        socket.on("processingComplete", async (data) => {
+            console.log(data.finalData);
+            setIsLoading((prev) => ({
+                state: false,
+                status: "completed",
+                report: data.report || prev.report,
+            })); // Stop loading, set final status
+            setIsCompleted(true); // Mark as completed
+            setFinalProcessedData(data.finalData); // Store the final processed data
+        });
+
+        // Listener for errors from the backend
+        socket.on("processingError", (error) => {
+            console.error("Backend processing error:", error.message);
+            setIsLoading({state: false, report: `Error: ${error.message}`});
+            setIsCompleted(false);
+            setFinalProcessedData(null);
+        });
     }
 
+    //Parses the csv and text files
     function handleParse() {
         if (!csvFile || !textFile) {
             setCsvError(csvFile ? null : "Please upload a CSV file.");
@@ -120,8 +137,14 @@ export default function DataUploader() {
             return;
         }
 
-        setIsLoading({state: true, report: "Parsing files locally..."});
+        //Set isloading to true
+        setIsLoading({
+            state: true,
+            status: "uploading data",
+            report: "Parsing files locally...",
+        });
         setIsCompleted(false);
+        setIsFileChange(false);
 
         let parsedCsvResult = null;
         let parsedTxtResult = null;
@@ -176,6 +199,7 @@ export default function DataUploader() {
                         setFile={setCsvFile}
                         setError={setCsvError}
                         iconSrc="/csv.png"
+                        setIsFileChange={setIsFileChange}
                     />
                     <div>
                         <span className="font-bold">Preview : </span>
@@ -201,6 +225,7 @@ export default function DataUploader() {
                         setFile={setTextFile}
                         setError={setTextError}
                         iconSrc="/txt.png"
+                        setIsFileChange={setIsFileChange}
                     />
                     <div>
                         <span className="font-bold">Preview : </span>
@@ -240,7 +265,7 @@ export default function DataUploader() {
                             ) : isCompleted ? (
                                 <>
                                     <span>
-                                        <CheckAnimation classData="size-7" />
+                                        <CheckIcon classData="size-7" />
                                     </span>
                                     Completed
                                 </>
@@ -258,7 +283,7 @@ export default function DataUploader() {
                                 </>
                             )}
                         </button>
-                        <p>Estimated time: 10 seconds</p>
+                        <p>Estimated time: 5-6 seconds per resume</p>
                     </div>
 
                     <>

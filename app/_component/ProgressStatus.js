@@ -1,5 +1,5 @@
 import Image from "next/image";
-import CheckAnimation from "./CheckAnimation";
+import CheckIcon from "./CheckIcon";
 
 export default function ProgressStatus({status = "", inProgress, isCompleted}) {
     if (isCompleted) {
@@ -12,7 +12,7 @@ export default function ProgressStatus({status = "", inProgress, isCompleted}) {
                     !inProgress ? "!hidden" : ""
                 }`}></span>
             <span className={`hidden ${!inProgress && "!inline"}`}>
-                <CheckAnimation classData="size-7" />
+                <CheckIcon classData="size-7" />
             </span>
 
             <p>
