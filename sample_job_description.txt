@@ -1,0 +1,20 @@
+# Job Title: Machine Learning Engineer Intern
+
+## About the Role
+We are looking for a passionate Machine Learning Engineer Intern to help us build scalable AI systems. You'll work with a team of software engineers and data scientists to develop models that power our core services.
+
+## Responsibilities
+- Build and deploy machine learning models for classification and NLP tasks.
+- Develop data pipelines and preprocess large datasets.
+- Collaborate with product managers and backend engineers.
+- Monitor performance and improve accuracy of models.
+
+## Requirements
+- Strong foundation in Python and machine learning libraries (e.g., scikit-learn, TensorFlow, or PyTorch).
+- Experience with NLP techniques (text classification, embeddings, transformers).
+- Understanding of software engineering best practices (Git, APIs, CI/CD).
+- Familiarity with cloud platforms (AWS/GCP/Azure).
+
+## Bonus Skills
+- Knowledge of resume parsing tools or vector databases (e.g., FAISS, Pinecone).
+- Experience working with document embeddings (e.g., Sentence-BERT).
